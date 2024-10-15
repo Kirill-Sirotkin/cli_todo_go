@@ -20,8 +20,8 @@ func main() {
 	fmt.Println("------ TODO CLI APP ------")
 	fmt.Println("type the \"help\" command to see available commands")
 
-	var err error
-	err = LoadData(&todos, DATA_FILE_PATH)
+	// var err error
+	err := LoadData(&todos, DATA_FILE_PATH)
 	if err != nil {
 		fmt.Printf("%v\ncreating a new save file\n", err)
 		SaveData(todos, DATA_FILE_PATH)
@@ -32,9 +32,10 @@ func main() {
 
 	var arg string
 	for {
-		_, err = fmt.Scanln(&arg)
+		_, err := fmt.Scanln(&arg)
 		if err != nil {
-			fmt.Println(err)
+			fmt.Printf("%v. Only the 1-word command needs to be entered\n", err)
+			continue
 		}
 
 		quit, err := handleCommandInput(&arg)
@@ -68,8 +69,10 @@ func handleCommandInput(arg *string) (bool, error) {
 		return true, nil
 	case "help":
 		displayAvailableCommands()
+		return false, nil
 	case "h":
 		displayAvailableCommands()
+		return false, nil
 	case "add":
 		err := handleAddTodo()
 		if err != nil {
@@ -92,6 +95,7 @@ func handleCommandInput(arg *string) (bool, error) {
 		}
 	case "show":
 		displayTodos(todos)
+		return false, nil
 	default:
 		return false, errors.New(ERROR_MSG)
 	}
@@ -100,6 +104,7 @@ func handleCommandInput(arg *string) (bool, error) {
 		return false, err
 	}
 
+	fmt.Println("changes saved.")
 	return false, nil
 }
 
@@ -149,7 +154,7 @@ func handleDeleteTodo() error {
 func handleEditTodo() error {
 	scanner := bufio.NewReader(os.Stdin)
 
-	fmt.Printf("enter the ID of the todo to delete: ")
+	fmt.Printf("enter the ID of the todo to edit: ")
 	id, err := scanner.ReadString('\n')
 	if err != nil {
 		return err
@@ -189,7 +194,7 @@ func handleEditTodo() error {
 func handleToggleTodo() error {
 	scanner := bufio.NewReader(os.Stdin)
 
-	fmt.Printf("enter the ID of the todo to delete: ")
+	fmt.Printf("enter the ID of the todo to toggle: ")
 	id, err := scanner.ReadString('\n')
 	if err != nil {
 		return err

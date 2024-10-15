@@ -15,9 +15,15 @@ import (
 // Mostly arbitrary constant values for formatting spaces and separators
 const TITLE_LENGTH_LIMIT int = 20
 const DESC_LENGTH_LIMIT int = 30
-const COMPLETE_FLAG_LENGTH_LIMIT int = 5
-const DATE_LENGTH_LIMIT int = 19
-const SEPARATORS_COUNT int = 18
+const COMPLETE_FLAG_LENGTH_LIMIT int = 10
+const DATE_LENGTH_LIMIT int = 20
+const SEPARATORS_COUNT int = 17
+const ID = "id"
+const TITLE = "title"
+const DESC = "description"
+const STATUS = "completed?"
+const TIME_START = "time started"
+const TIME_END = "time finished"
 
 func displayAvailableCommands() {
 	fmt.Printf("\"help\" or \"h\"       - see list of available commands\n")
@@ -31,7 +37,7 @@ func displayAvailableCommands() {
 }
 
 func displayTodos(tm TodosMap) {
-	maxIdLength := getMaxIdLength(tm)
+	maxIdLength := max(getMaxIdLength(tm), len(ID))
 	totalLength := maxIdLength +
 		TITLE_LENGTH_LIMIT +
 		DESC_LENGTH_LIMIT +
@@ -45,6 +51,7 @@ func displayTodos(tm TodosMap) {
 	}
 	sort.Ints(keys)
 
+	fmt.Println("")
 	fmt.Printf("%v\n", strings.Repeat("-", max(0, totalLength)))
 
 	if len(tm.Todos) == 0 {
@@ -53,9 +60,23 @@ func displayTodos(tm TodosMap) {
 		return
 	}
 
+	formatHeader(maxIdLength)
+	fmt.Printf("%v\n", strings.Repeat("-", max(0, totalLength)))
+
 	for _, k := range keys {
 		fmt.Println(formatBlock(tm.Todos[k], maxIdLength, totalLength))
 	}
+}
+
+func formatHeader(idLength int) {
+	idString := ID + strings.Repeat(" ", max(0, idLength-len(ID)))
+	completeFlagString := STATUS + strings.Repeat(" ", max(0, COMPLETE_FLAG_LENGTH_LIMIT-len(STATUS)))
+	startedDateString := TIME_START + strings.Repeat(" ", max(0, DATE_LENGTH_LIMIT-len(TIME_START)))
+	completedDateString := TIME_END + strings.Repeat(" ", max(0, DATE_LENGTH_LIMIT-len(TIME_END)))
+	titleString := TITLE + strings.Repeat(" ", max(0, TITLE_LENGTH_LIMIT-len(TITLE)))
+	descString := DESC + strings.Repeat(" ", max(0, DESC_LENGTH_LIMIT-len(DESC)))
+
+	fmt.Printf("%v", getLineWithSeparators(idString, titleString, descString, completeFlagString, startedDateString, completedDateString))
 }
 
 func formatBlock(t Todo, idLength int, totalLength int) string {
@@ -105,19 +126,23 @@ func formatBlock(t Todo, idLength int, totalLength int) string {
 		titleString += strings.Repeat(" ", max(0, TITLE_LENGTH_LIMIT-len(titleString)))
 		descString += strings.Repeat(" ", max(0, DESC_LENGTH_LIMIT-len(descString)))
 
-		tempLine := fmt.Sprintf("%v | %v | %v | %v | %v | %v |\n",
-			idString,
-			titleString,
-			descString,
-			completeFlagString,
-			startedDateString,
-			completedDateString)
+		tempLine := getLineWithSeparators(idString, titleString, descString, completeFlagString, startedDateString, completedDateString)
 
 		tempBlock += tempLine
 	}
 
 	resultLine += tempBlock + strings.Repeat("-", max(0, totalLength))
 	return resultLine
+}
+
+func getLineWithSeparators(id, title, desc, status, timeStart, timeEnd string) string {
+	return fmt.Sprintf("%v | %v | %v | %v | %v | %v |\n",
+		id,
+		title,
+		desc,
+		status,
+		timeStart,
+		timeEnd)
 }
 
 func getMaxIdLength(tm TodosMap) int {
