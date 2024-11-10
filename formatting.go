@@ -16,7 +16,7 @@ import (
 const TITLE_LENGTH_LIMIT int = 20
 const DESC_LENGTH_LIMIT int = 30
 const COMPLETE_FLAG_LENGTH_LIMIT int = 10
-const DATE_LENGTH_LIMIT int = 20
+const DATE_LENGTH_LIMIT int = 21
 const SEPARATORS_COUNT int = 17
 const ID = "id"
 const TITLE = "title"
