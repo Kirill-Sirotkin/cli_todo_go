@@ -8,7 +8,7 @@ Made in Go.
 - Saving and loading Todo data locally using .json
 
 **To get started:**
-- Type "go build -o bin/todo.exe" into the root folder terminal
+- Type `go build -o bin/todo.exe` into the root folder terminal
 
 This will create the "bin" folder and build an executable, which is the cli app. 
 
